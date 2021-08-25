@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -9,35 +10,48 @@ public class Server {
     }
 }
 
-class Connection{ //implements Runnable{
+class Connection {
     public Connection() {
         ServerSocket serverSocket;
-        Socket entrySocket;
-        String nick, value, weight, perc, ip;
+        Socket entrySocket, sendDestinatary;
+        String value, weight, perc, ip;
+        ObjectInputStream dataReceived;
+        ObjectOutputStream dataReSent;
         TextField.DataPack received;
+        Thread listen;
 
         received = new TextField.DataPack();
+
         try {
-            serverSocket = new ServerSocket(8080);
-            entrySocket = serverSocket.accept();
-            System.out.println("You are now connected");
+            serverSocket = new ServerSocket(9090);
+            while(true){ // constantly receives packed data
 
-            ObjectInputStream dataReceived = new ObjectInputStream(entrySocket.getInputStream());
-            received = (TextField.DataPack) dataReceived.readObject();
+                // From client 1 to server
+                entrySocket = serverSocket.accept();
+                System.out.println("You are now connected");
 
-            nick = received.getNick();
-            value = received.getValue();
-            weight = received.getWeight();
-            perc = received.getPerc();
-            ip = received.getIp();
+                dataReceived = new ObjectInputStream(entrySocket.getInputStream());
+                received = (TextField.DataPack) dataReceived.readObject(); // Converting types of objects
 
-            System.out.println(nick + " " + value + " " + weight + " " + perc + " " + ip);
+                value = received.getValue();
+                weight = received.getWeight();
+                perc = received.getPerc();
+                ip = received.getIp(); // ip of the person we want to send the msg to
 
-            entrySocket.close();
-            System.out.println("You are now disconnected");
+                System.out.println(value + " " + weight + " " + perc + " " + ip);
 
+                // From server to client 2
+                sendDestinatary = new Socket(ip, 8080); // sends to a third computer (client 2)
+                dataReSent = new ObjectOutputStream(sendDestinatary.getOutputStream());
+                dataReSent.writeObject(received);
+                dataReSent.close();
 
+                sendDestinatary.close();
+                entrySocket.close();
+                System.out.println("You are now disconnected");
+            }
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Exception while sending to Client 2 from Server");
             e.printStackTrace();
         }
     }
