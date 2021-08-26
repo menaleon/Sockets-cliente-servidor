@@ -9,8 +9,16 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.net.Socket;
 
+/**
+ * Execute the client GUI by instantiating a window. Zero parameters and returns
+ */
 public class Interface { // creates a window
     private static Window win;
+
+    /**
+     * Initialize the GUI. Zero returns, one parameter
+     * @param args An array of string arguments
+     */
     public static void main(String[] args){
         win = new Window();
         win.setVisible(true);
@@ -18,8 +26,15 @@ public class Interface { // creates a window
     }
 }
 
+/**
+ * Defines characteristics of the GUI´s window and instantiates a TextField class
+ */
 class Window extends JFrame { // defines characteristics of the window
     private TextField textField;
+
+    /**
+     * Constructor of the window class. Set the boundaries of the window and adds a TextField instance
+     */
     public Window(){
         setBounds(400, 200, 500, 300);
         textField = new TextField();
@@ -27,6 +42,9 @@ class Window extends JFrame { // defines characteristics of the window
     }
 }
 
+/**
+ * Create text fields to type on, and a text area to read messages. Implements Runnable from the Thread class to receive msgs
+ */
 class TextField extends JPanel implements Runnable{ // text fields to type on and read. THREAD used to receive msgs in parallel
     private JTextField valueTxt, weightTxt, percTxt, ipTxt;
     private JTextArea areaTxt;
@@ -34,6 +52,9 @@ class TextField extends JPanel implements Runnable{ // text fields to type on an
     private SendText eventBtn;
     private Thread receive;
 
+    /**
+     * Constructor of TextField class. Creates fields and area to write/read, the send button, the mouse-type event and starts a thread
+     */
     public TextField(){
 
         valueTxt = new JTextField("Value",5);
@@ -93,6 +114,9 @@ class TextField extends JPanel implements Runnable{ // text fields to type on an
         }
     }
 
+    /**
+     * Sends messages to server by clicking the send button. This class is inside the TextField class
+     */
     class SendText implements ActionListener{ // send button: SENDS TO SERVER
         Socket clientSocket;
         DataPack data;
@@ -125,17 +149,59 @@ class TextField extends JPanel implements Runnable{ // text fields to type on an
             }
         }
     }
+
+    /**
+     * Packs data written in the text fields to send them to server. It serializes data pack
+     */
     static class DataPack implements Serializable { // object containing data we type. "Serialize" = convert data into binary
         private String value, weight, perc, ip;      // so it can be sent and re-convert into readable data when it gets to server
 
+        /**
+         * Sets the value of the attribute "value"
+         * @param value int value
+         */
         public void setValue(String value) {this.value = value;}
+
+        /**
+         * Sets the value of the attribute "weight"
+         * @param weight int weight of the product
+         */
         public void setWeight(String weight) {this.weight = weight;}
+
+        /**
+         * Sets the value of the attribute "perc" (percentage)
+         * @param perc float Percentage
+         */
         public void setPerc(String perc) {this.perc = perc;}
+
+        /**
+         * Sets the value of the attribute "ip"
+         * @param ip this ip is from the person who will receive the message
+         */
         public void setIp(String ip) {this.ip = ip;}
 
+        /**
+         * Gets the value of the attribute "value"
+         * @return value
+         */
         public String getValue() {return value;}
+
+        /**
+         * Gets the value of the attribute "weight"
+         * @return weight
+         */
         public String getWeight() {return weight;}
+
+        /**
+         * Gets the value of the attribute "perc" (percentage)
+         * @return perc
+         */
         public String getPerc() {return perc;}
+
+        /**
+         * Gets the value of the attribute "ip" (this ip is from the person who will receive the message)
+         * @return ip
+         */
         public String getIp() {return ip;}
     }
 }

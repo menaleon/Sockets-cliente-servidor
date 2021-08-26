@@ -4,12 +4,22 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Executes the server App. It does not have a GUI like client class
+ */
 public class Server {
+    /**
+     * Instantiates an object of the Connection class
+     * @param args An array of String values
+     */
     public static void main(String[] args){
-        Connection input = new Connection();
+        Connection toClient = new Connection();
     }
 }
 
+/**
+ * Tries to create connections using sockets to receive and send messages
+ */
 class Connection {
     public Connection() {
         ServerSocket serverSocket;
@@ -18,7 +28,6 @@ class Connection {
         ObjectInputStream dataReceived;
         ObjectOutputStream dataReSent;
         TextField.DataPack received;
-        Thread listen;
 
         received = new TextField.DataPack();
 
